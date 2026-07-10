@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: spring-env-config
 data:
-  SPRING_CONFIG_IMPORT: {{ .Values.springEnv.configImport | quote }}
+  CONFIG_SERVER_URL: {{ .Values.springEnv.configServerUrl | quote }}
   EUREKA_URI: {{ .Values.springEnv.eurekaUri | quote }}
   KEYCLOAK_ISSUER_URI: {{ .Values.springEnv.keycloakIssuerUri | quote }}
   KEYCLOAK_JWKS_URI: {{ .Values.springEnv.keycloakJwksUri | quote }}

@@ -1,0 +1,13 @@
+# Overrides for minikube testing via ArgoCD.
+# Base values.yaml has the defaults; only put things here that differ per environment.
+
+dockerhubUser: dali124
+
+# Update these two once you've run:
+#   minikube service keycloak -n marketplace --url
+#   minikube service gateway  -n marketplace --url
+springEnv:
+  keycloakIssuerUri: "http://127.0.0.1:REPLACE_ME/realms/microservice-project"
+
+frontend:
+  apiBaseUrl: "http://127.0.0.1:REPLACE_ME"

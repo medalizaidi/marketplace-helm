@@ -40,7 +40,7 @@ infra:
 ## ---- Shared Spring env (configserver/eureka/keycloak wiring) ----
 springEnv:
   eurekaUri: "http://eureka:8761/eureka/"
-  configImport: "optional:configserver:http://configserver:8888"
+  configServerUrl: "http://configserver:8888"
   # iss claim is validated against the EXTERNAL url the browser used to reach keycloak.
   # For minikube, update this after exposing keycloak (see README) — e.g. the URL
   # printed by `minikube service keycloak -n marketplace --url`.
@@ -82,6 +82,7 @@ newsletter:
   confirmSecret: dev_confirm_secret
   unsubscribeSecret: dev_unsubscribe_secret
   appBaseUrl: "http://localhost:4000"
+  rabbitmqExchange: marketplace.exchange
 
 ## ---- Frontend (Vite) ----
 frontend:

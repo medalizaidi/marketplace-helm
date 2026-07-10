@@ -25,15 +25,17 @@ spec:
           readinessProbe:
             exec:
               command: ["mysqladmin", "ping", "-h", "localhost", "-p{{ .Values.infra.mysql.rootPassword }}"]
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
             periodSeconds: 10
-            failureThreshold: 10
+            timeoutSeconds: 5
+            failureThreshold: 20
           livenessProbe:
             exec:
               command: ["mysqladmin", "ping", "-h", "localhost", "-p{{ .Values.infra.mysql.rootPassword }}"]
-            initialDelaySeconds: 30
+            initialDelaySeconds: 45
             periodSeconds: 15
-            failureThreshold: 10
+            timeoutSeconds: 5
+            failureThreshold: 20
       volumes:
         - name: mysql-data
           emptyDir: {}

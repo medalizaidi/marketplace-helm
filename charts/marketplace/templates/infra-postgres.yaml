@@ -28,15 +28,17 @@ spec:
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
-            initialDelaySeconds: 15
+            initialDelaySeconds: 20
             periodSeconds: 10
-            failureThreshold: 10
+            timeoutSeconds: 5
+            failureThreshold: 20
           livenessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
-            initialDelaySeconds: 30
+            initialDelaySeconds: 35
             periodSeconds: 15
-            failureThreshold: 10
+            timeoutSeconds: 5
+            failureThreshold: 20
       volumes:
         - name: postgres-data
           emptyDir: {}

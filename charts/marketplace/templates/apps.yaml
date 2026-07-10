@@ -30,9 +30,10 @@ spec:
               value: {{ $.Values.springEnv.eurekaUri | quote }}
           readinessProbe:
             httpGet: { path: /Eureka/default, port: {{ $cfg.port }} }
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
             periodSeconds: 10
-            failureThreshold: 15
+            timeoutSeconds: 5
+            failureThreshold: 20
           {{- else if eq $name "eureka" }}
           {{- else }}
           envFrom:

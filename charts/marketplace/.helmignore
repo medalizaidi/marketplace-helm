@@ -1,0 +1,17 @@
+# Patterns to ignore when building packages.
+.DS_Store
+.git/
+.gitignore
+.idea/
+*.tmproj
+.vscode/
+*.swp
+*.bak
+*.tmp
+*.orig
+cache.img
+*.img
+*.iso
+*.tgz
+*.zip
+node_modules/

@@ -1,0 +1,60 @@
+{{- range $name, $cfg := .Values.apps }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels: { app: {{ $name }} }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: {{ $name }} }
+  template:
+    metadata:
+      labels: { app: {{ $name }} }
+    spec:
+      {{- if not (has $name (list "configserver" "eureka")) }}
+      initContainers:
+        - name: wait-for-configserver
+          image: busybox:1.36
+          command: ["sh", "-c", "until wget -qO- http://configserver:8888/Eureka/default >/dev/null 2>&1; do echo waiting for configserver; sleep 5; done"]
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ $.Values.dockerhubUser }}/{{ $name }}:{{ $.Values.imageTag }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy }}
+          ports:
+            - containerPort: {{ $cfg.port }}
+          {{- if eq $name "configserver" }}
+          env:
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: {{ $.Values.springEnv.eurekaUri | quote }}
+          readinessProbe:
+            httpGet: { path: /Eureka/default, port: {{ $cfg.port }} }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 15
+          {{- else if eq $name "eureka" }}
+          {{- else }}
+          envFrom:
+            - configMapRef: { name: spring-env-config }
+            - configMapRef: { name: db-hosts-config }
+          {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels: { app: {{ $name }} }
+spec:
+  {{- if $cfg.service }}
+  type: {{ $cfg.service.type }}
+  {{- end }}
+  selector: { app: {{ $name }} }
+  ports:
+    - port: {{ $cfg.port }}
+      targetPort: {{ $cfg.port }}
+      {{- if and $cfg.service (eq $cfg.service.type "NodePort") }}
+      nodePort: {{ $cfg.service.nodePort }}
+      {{- end }}
+---
+{{- end }}

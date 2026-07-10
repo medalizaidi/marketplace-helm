@@ -1,0 +1,93 @@
+## Docker Hub account images are pulled from. Every app image is
+## <dockerhubUser>/<name>:<imageTag>
+dockerhubUser: DOCKERHUB_USER
+imageTag: latest
+imagePullPolicy: IfNotPresent
+
+## Set with: helm install marketplace ./charts/marketplace -n marketplace --create-namespace
+
+## ---- Infra ----
+infra:
+  mysql:
+    image: mysql:8.0
+    rootPassword: root
+    port: 3306
+  postgres:
+    image: postgres:16
+    user: postgres
+    password: postgres
+    port: 5432
+  mongo:
+    image: mongo:7
+    port: 27017
+  rabbitmq:
+    image: rabbitmq:3-management
+    port: 5672
+    managementPort: 15672
+  mailpit:
+    image: axllent/mailpit
+    smtpPort: 1025
+    webPort: 8025
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.1
+    admin: admin
+    adminPassword: admin
+    port: 8080
+    service:
+      type: NodePort
+      nodePort: 30180
+
+## ---- Shared Spring env (configserver/eureka/keycloak wiring) ----
+springEnv:
+  eurekaUri: "http://eureka:8761/eureka/"
+  configImport: "optional:configserver:http://configserver:8888"
+  # iss claim is validated against the EXTERNAL url the browser used to reach keycloak.
+  # For minikube, update this after exposing keycloak (see README) — e.g. the URL
+  # printed by `minikube service keycloak -n marketplace --url`.
+  keycloakIssuerUri: "http://localhost:30180/realms/microservice-project"
+  keycloakJwksUri: "http://keycloak:8080/realms/microservice-project/protocol/openid-connect/certs"
+
+## ---- Spring Cloud core + business services ----
+## Every entry here gets a Deployment + Service. configserver/eureka are special-cased
+## in the template (different env, no wait-for-configserver initContainer).
+## Everything else gets spring-env-config + db-hosts-config injected and waits for
+## configserver to be ready before starting.
+apps:
+  configserver:
+    port: 8888
+  eureka:
+    port: 8761
+  gateway:
+    port: 8082
+    service:
+      type: NodePort
+      nodePort: 30082
+  userservice:
+    port: 8081
+  productcategoryservice:
+    port: 8087
+  orderproject:
+    port: 8092
+  partnerservice:
+    port: 8085
+  deliveryservice:
+    port: 8086
+  reviewservice:
+    port: 8089
+
+## ---- Newsletter (Express) ----
+newsletter:
+  port: 4000
+  jwtSecret: dev_newsletter_jwt_secret
+  confirmSecret: dev_confirm_secret
+  unsubscribeSecret: dev_unsubscribe_secret
+  appBaseUrl: "http://localhost:4000"
+
+## ---- Frontend (Vite) ----
+frontend:
+  port: 4200
+  # Update after exposing gateway on minikube — see README.
+  apiBaseUrl: "http://localhost:30082"
+  service:
+    type: NodePort
+    nodePort: 30200

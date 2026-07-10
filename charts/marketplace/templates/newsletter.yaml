@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: newsletter
+  labels: { app: newsletter }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: newsletter }
+  template:
+    metadata:
+      labels: { app: newsletter }
+    spec:
+      containers:
+        - name: newsletter
+          image: {{ .Values.dockerhubUser }}/newsletter:{{ .Values.imageTag }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.newsletter.port }}
+          envFrom:
+            - secretRef: { name: newsletter-secret }
+          env:
+            - name: PORT
+              value: {{ .Values.newsletter.port | quote }}
+            - name: NODE_ENV
+              value: production
+            - name: MONGODB_URI
+              value: "mongodb://mongo:{{ .Values.infra.mongo.port }}/newsletter_service_db"
+            - name: RABBITMQ_URL
+              value: "amqp://guest:guest@rabbitmq:{{ .Values.infra.rabbitmq.port }}"
+            - name: RABBITMQ_EXCHANGE
+              value: marketplace_events
+            - name: RABBITMQ_QUEUE
+              value: newsletter_service_queue
+            - name: EUREKA_SERVICE_URL
+              value: "http://eureka:8761/eureka/apps/"
+            - name: SERVICE_HOST
+              value: newsletter
+            - name: SERVICE_PORT
+              value: {{ .Values.newsletter.port | quote }}
+            - name: SMTP_HOST
+              value: mailpit
+            - name: SMTP_PORT
+              value: {{ .Values.infra.mailpit.smtpPort | quote }}
+            - name: SMTP_SECURE
+              value: "false"
+            - name: SMTP_FROM_NAME
+              value: "Marketplace Newsletter"
+            - name: SMTP_FROM_EMAIL
+              value: no-reply@marketplace.local
+            - name: APP_BASE_URL
+              value: {{ .Values.newsletter.appBaseUrl | quote }}
+            - name: RATE_LIMIT_WINDOW_MS
+              value: "900000"
+            - name: RATE_LIMIT_MAX
+              value: "1000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: newsletter
+  labels: { app: newsletter }
+spec:
+  selector: { app: newsletter }
+  ports:
+    - port: {{ .Values.newsletter.port }}
+      targetPort: {{ .Values.newsletter.port }}

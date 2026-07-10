@@ -1,0 +1,20 @@
+Marketplace stack deployed into namespace: {{ .Release.Namespace }}
+
+Check pod status:
+  kubectl -n {{ .Release.Namespace }} get pods -w
+
+Get URLs for the browser-facing services (minikube):
+  minikube service gateway   -n {{ .Release.Namespace }} --url
+  minikube service keycloak  -n {{ .Release.Namespace }} --url
+  minikube service frontend  -n {{ .Release.Namespace }} --url
+
+IMPORTANT: Keycloak's issuer URL (springEnv.keycloakIssuerUri) and the frontend's
+API base URL (frontend.apiBaseUrl) are pre-set to placeholder NodePort URLs.
+Once you have the real `minikube service --url` outputs, update them:
+
+  helm upgrade marketplace ./charts/marketplace -n {{ .Release.Namespace }} \
+    --set springEnv.keycloakIssuerUri="<minikube keycloak url>/realms/microservice-project" \
+    --set frontend.apiBaseUrl="<minikube gateway url>"
+
+then restart the affected deployments so they pick up the new config:
+  kubectl -n {{ .Release.Namespace }} rollout restart deployment/gateway deployment/frontend

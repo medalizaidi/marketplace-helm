@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels: { app: mysql }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: mysql }
+  template:
+    metadata:
+      labels: { app: mysql }
+    spec:
+      containers:
+        - name: mysql
+          image: {{ .Values.infra.mysql.image }}
+          ports:
+            - containerPort: {{ .Values.infra.mysql.port }}
+          envFrom:
+            - secretRef: { name: mysql-secret }
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          readinessProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-h", "localhost", "-p{{ .Values.infra.mysql.rootPassword }}"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 10
+          livenessProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-h", "localhost", "-p{{ .Values.infra.mysql.rootPassword }}"]
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 10
+      volumes:
+        - name: mysql-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels: { app: mysql }
+spec:
+  selector: { app: mysql }
+  ports:
+    - port: {{ .Values.infra.mysql.port }}
+      targetPort: {{ .Values.infra.mysql.port }}

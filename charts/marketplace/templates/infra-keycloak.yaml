@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels: { app: keycloak }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: keycloak }
+  template:
+    metadata:
+      labels: { app: keycloak }
+    spec:
+      containers:
+        - name: keycloak
+          image: {{ .Values.infra.keycloak.image }}
+          args: ["start-dev"]
+          envFrom:
+            - secretRef: { name: keycloak-secret }
+          env:
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+          ports:
+            - containerPort: {{ .Values.infra.keycloak.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels: { app: keycloak }
+spec:
+  type: {{ .Values.infra.keycloak.service.type }}
+  selector: { app: keycloak }
+  ports:
+    - port: {{ .Values.infra.keycloak.port }}
+      targetPort: {{ .Values.infra.keycloak.port }}
+      {{- if eq .Values.infra.keycloak.service.type "NodePort" }}
+      nodePort: {{ .Values.infra.keycloak.service.nodePort }}
+      {{- end }}

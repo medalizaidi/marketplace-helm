@@ -22,20 +22,24 @@ spec:
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
+          startupProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp", "-p{{ .Values.infra.mysql.rootPassword }}"]
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
           readinessProbe:
             exec:
-              command: ["mysqladmin", "ping", "-h", "localhost", "-p{{ .Values.infra.mysql.rootPassword }}"]
-            initialDelaySeconds: 30
+              command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp", "-p{{ .Values.infra.mysql.rootPassword }}"]
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 20
+            failureThreshold: 6
           livenessProbe:
             exec:
-              command: ["mysqladmin", "ping", "-h", "localhost", "-p{{ .Values.infra.mysql.rootPassword }}"]
-            initialDelaySeconds: 45
+              command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp", "-p{{ .Values.infra.mysql.rootPassword }}"]
             periodSeconds: 15
             timeoutSeconds: 5
-            failureThreshold: 20
+            failureThreshold: 6
       volumes:
         - name: mysql-data
           emptyDir: {}

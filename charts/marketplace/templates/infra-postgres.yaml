@@ -25,20 +25,24 @@ spec:
             - name: postgres-init
               mountPath: /docker-entrypoint-initdb.d/init.sql
               subPath: init.sql
+          startupProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
-            initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 20
+            failureThreshold: 6
           livenessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
-            initialDelaySeconds: 35
             periodSeconds: 15
             timeoutSeconds: 5
-            failureThreshold: 20
+            failureThreshold: 6
       volumes:
         - name: postgres-data
           emptyDir: {}

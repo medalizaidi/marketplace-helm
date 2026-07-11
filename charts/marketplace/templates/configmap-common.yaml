@@ -7,6 +7,11 @@ data:
   EUREKA_URI: {{ .Values.springEnv.eurekaUri | quote }}
   KEYCLOAK_ISSUER_URI: {{ .Values.springEnv.keycloakIssuerUri | quote }}
   KEYCLOAK_JWKS_URI: {{ .Values.springEnv.keycloakJwksUri | quote }}
+  # Register in Eureka by pod IP, not pod hostname. Without this a service
+  # registers as e.g. "orderproject-6bbb7c8d8c-2gjqp" (its pod name), which
+  # Kubernetes DNS cannot resolve, so the gateway's lb:// routing fails with
+  # UnknownHostException -> HTTP 500. Pod IPs are routable in-cluster.
+  # (Overrides the config-server value; a no-op for services that already set it.)
   EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
 
 ---

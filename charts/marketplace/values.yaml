@@ -45,7 +45,7 @@ springEnv:
   # For minikube, update this after exposing keycloak (see README) — e.g. the URL
   # printed by `minikube service keycloak -n marketplace --url`.
   keycloakIssuerUri: "http://localhost:30180/realms/microservice-project"
-  keycloakJwksUri: "hhttp://localhost:30180/realms/microservice-project/protocol/openid-connect/certs"
+  keycloakJwksUri: "http://keycloak:8080/realms/microservice-project/protocol/openid-connect/certs"
 
 ## ---- Spring Cloud core + business services ----
 ## Every entry here gets a Deployment + Service. configserver/eureka are special-cased

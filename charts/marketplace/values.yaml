@@ -88,7 +88,7 @@ newsletter:
 frontend:
   port: 4200
   # Update after exposing gateway on minikube — see README.
-  apiBaseUrl: "http://localhost:30082"
+  apiBaseUrl: "http://192.168.49.2:30082"
   service:
     type: NodePort
     nodePort: 30200

@@ -7,7 +7,6 @@
 dockerhubUser: dali124
 imageTag: latest
 imagePullPolicy: IfNotPresent
-
 ## Set with: helm install marketplace ./charts/marketplace -n marketplace --create-namespace
 
 ## ---- Infra ----
@@ -40,7 +39,6 @@ infra:
     service:
       type: NodePort
       nodePort: 30180
-
 ## ---- Shared Spring env (configserver/eureka/keycloak wiring) ----
 springEnv:
   eurekaUri: "http://eureka:8761/eureka/"
@@ -50,7 +48,6 @@ springEnv:
   # printed by `minikube service keycloak -n marketplace --url`.
   keycloakIssuerUri: "http://localhost:30180/realms/microservice-project"
   keycloakJwksUri: "http://keycloak:8080/realms/microservice-project/protocol/openid-connect/certs"
-
 ## ---- Spring Cloud core + business services ----
 ## Every entry here gets a Deployment + Service. configserver/eureka are special-cased
 ## in the template (different env, no wait-for-configserver initContainer).
@@ -87,7 +84,6 @@ apps:
   reviewservice:
     port: 8089
     tag: latest
-
 ## ---- Newsletter (Express) ----
 newsletter:
   port: 4000
@@ -97,11 +93,10 @@ newsletter:
   unsubscribeSecret: dev_unsubscribe_secret
   appBaseUrl: "http://localhost:4000"
   rabbitmqExchange: marketplace.exchange
-
 ## ---- Frontend (Vite) ----
 frontend:
   port: 4200
-  tag: latest
+  tag: e8b8051
   # Update after exposing gateway on minikube — see README.
   apiBaseUrl: "http://192.168.49.2:30082"
   # Browser-facing Keycloak URL (the SPA redirects the user's browser here to log in),

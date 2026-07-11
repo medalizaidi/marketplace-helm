@@ -11,6 +11,11 @@ spec:
   template:
     metadata:
       labels: { app: {{ $name }} }
+      annotations:
+        # Roll the pods whenever the shared config changes, so env updates
+        # (e.g. EUREKA_INSTANCE_PREFER_IP_ADDRESS) actually take effect on a
+        # `helm upgrade` — ConfigMap changes alone don't restart consumers.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-common.yaml") $ | sha256sum }}
     spec:
       {{- if not (has $name (list "configserver" "eureka")) }}
       initContainers:

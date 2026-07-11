@@ -25,7 +25,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ $name }}
-          image: {{ $.Values.dockerhubUser }}/{{ $name }}:{{ $.Values.imageTag }}
+          image: {{ $.Values.dockerhubUser }}/{{ $name }}:{{ $cfg.tag | default $.Values.imageTag }}
           imagePullPolicy: {{ $.Values.imagePullPolicy }}
           ports:
             - containerPort: {{ $cfg.port }}

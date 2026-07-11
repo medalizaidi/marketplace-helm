@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: {{ .Values.dockerhubUser }}/frontend:{{ .Values.imageTag }}
+          image: {{ .Values.dockerhubUser }}/frontend:{{ .Values.frontend.tag | default .Values.imageTag }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.frontend.port }}

@@ -1,5 +1,9 @@
 ## Docker Hub account images are pulled from. Every app image is
-## <dockerhubUser>/<name>:<imageTag>
+## <dockerhubUser>/<name>:<tag>, where <tag> is set PER SERVICE below (see the
+## `tag:` field on each app / frontend / newsletter). The CI/CD pipeline rewrites
+## those per-service tags to the built commit SHA, so each service can move
+## independently and no deploy relies on the mutable "latest" tag.
+## imageTag is only a fallback used if a given service has no `tag:` set.
 dockerhubUser: dali124
 imageTag: latest
 imagePullPolicy: IfNotPresent
@@ -55,29 +59,39 @@ springEnv:
 apps:
   configserver:
     port: 8888
+    tag: latest
   eureka:
     port: 8761
+    tag: latest
   gateway:
     port: 8082
+    tag: latest
     service:
       type: NodePort
       nodePort: 30082
   userservice:
     port: 8081
+    tag: latest
   productcategoryservice:
     port: 8087
+    tag: latest
   orderproject:
     port: 8092
+    tag: latest
   partnerservice:
     port: 8085
+    tag: latest
   deliveryservice:
     port: 8086
+    tag: latest
   reviewservice:
     port: 8089
+    tag: latest
 
 ## ---- Newsletter (Express) ----
 newsletter:
   port: 4000
+  tag: latest
   jwtSecret: dev_newsletter_jwt_secret
   confirmSecret: dev_confirm_secret
   unsubscribeSecret: dev_unsubscribe_secret
@@ -87,6 +101,7 @@ newsletter:
 ## ---- Frontend (Vite) ----
 frontend:
   port: 4200
+  tag: latest
   # Update after exposing gateway on minikube — see README.
   apiBaseUrl: "http://192.168.49.2:30082"
   # Browser-facing Keycloak URL (the SPA redirects the user's browser here to log in),

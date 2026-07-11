@@ -17,7 +17,7 @@ spec:
           command: ["sh", "-c", "until wget -qO- http://configserver:8888/Eureka/default >/dev/null 2>&1; do echo waiting for configserver; sleep 5; done"]
       containers:
         - name: newsletter
-          image: {{ .Values.dockerhubUser }}/newsletter:{{ .Values.imageTag }}
+          image: {{ .Values.dockerhubUser }}/newsletter:{{ .Values.newsletter.tag | default .Values.imageTag }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.newsletter.port }}

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+data:
+  # The exported realm definition (realm "microservice-project" + all clients/roles).
+  # Loaded from files/keycloak-realm.json and mounted into the keycloak container's
+  # import directory so `start-dev --import-realm` creates the realm on first boot.
+  keycloak-realm.json: |
+{{ .Files.Get "files/keycloak-realm.json" | indent 4 }}

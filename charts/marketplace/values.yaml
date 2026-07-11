@@ -89,6 +89,10 @@ frontend:
   port: 4200
   # Update after exposing gateway on minikube — see README.
   apiBaseUrl: "http://192.168.49.2:30082"
+  # Browser-facing Keycloak URL (the SPA redirects the user's browser here to log in),
+  # so it must be the EXTERNAL NodePort URL, not the in-cluster keycloak:8080.
+  # Update to the real `minikube service keycloak --url` after deploy.
+  keycloakUrl: "http://localhost:30180"
   service:
     type: NodePort
     nodePort: 30200

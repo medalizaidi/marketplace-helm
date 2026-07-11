@@ -14,7 +14,9 @@ spec:
       containers:
         - name: keycloak
           image: {{ .Values.infra.keycloak.image }}
-          args: ["start-dev"]
+          # --import-realm makes Keycloak import every *.json in its import dir on
+          # startup, creating the "microservice-project" realm the whole stack needs.
+          args: ["start-dev", "--import-realm"]
           envFrom:
             - secretRef: { name: keycloak-secret }
           env:
@@ -24,6 +26,13 @@ spec:
               value: "false"
           ports:
             - containerPort: {{ .Values.infra.keycloak.port }}
+          volumeMounts:
+            - name: keycloak-realm
+              mountPath: /opt/keycloak/data/import
+      volumes:
+        - name: keycloak-realm
+          configMap:
+            name: keycloak-realm
 ---
 apiVersion: v1
 kind: Service

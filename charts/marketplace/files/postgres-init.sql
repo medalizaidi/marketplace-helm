@@ -1,3 +1,4 @@
--- Replace this file with the contents of your repo's ./docker/postgres-init.sql
--- It gets loaded into a ConfigMap and mounted at /docker-entrypoint-initdb.d/init.sql
--- so Postgres runs it automatically on first startup.
+CREATE DATABASE "ms-delivery";
+CREATE DATABASE "ms-order";
+CREATE DATABASE "ms-partner";
+CREATE DATABASE product_category_db;

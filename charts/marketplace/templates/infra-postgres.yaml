@@ -28,20 +28,20 @@ spec:
           startupProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 60
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 30
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 6
           livenessProbe:
             exec:
               command: ["pg_isready", "-U", {{ .Values.infra.postgres.user | quote }}]
             periodSeconds: 15
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 6
       volumes:
         - name: postgres-data

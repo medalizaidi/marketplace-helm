@@ -25,20 +25,20 @@ spec:
           startupProbe:
             exec:
               command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp", "-p{{ .Values.infra.mysql.rootPassword }}"]
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 60
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 30
           readinessProbe:
             exec:
               command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp", "-p{{ .Values.infra.mysql.rootPassword }}"]
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 6
           livenessProbe:
             exec:
               command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp", "-p{{ .Values.infra.mysql.rootPassword }}"]
             periodSeconds: 15
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 6
       volumes:
         - name: mysql-data

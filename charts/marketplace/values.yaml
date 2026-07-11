@@ -1,6 +1,6 @@
 ## Docker Hub account images are pulled from. Every app image is
 ## <dockerhubUser>/<name>:<imageTag>
-dockerhubUser: dali124
+dockerhubUser: DOCKERHUB_USER
 imageTag: latest
 imagePullPolicy: IfNotPresent
 

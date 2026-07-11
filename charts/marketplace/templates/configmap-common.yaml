@@ -13,6 +13,7 @@ data:
   # UnknownHostException -> HTTP 500. Pod IPs are routable in-cluster.
   # (Overrides the config-server value; a no-op for services that already set it.)
   EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+
 ---
 apiVersion: v1
 kind: ConfigMap
